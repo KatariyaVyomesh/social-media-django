@@ -1,0 +1,54 @@
+<!-- templates/feed.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Feed</h1>
+<div class="posts">
+    {% for post in posts %}
+    <div class="post">
+        <div class="post-header">
+            <a href="{% url 'profile' post.user.username %}">
+                {% if post.user.profile.profile_image %}
+                    <img src="{{ post.user.profile.profile_image.url }}" class="profile-pic">
+                {% else %}
+                    <img src="/media/profile_images/default.jpg" class="profile-pic">
+                {% endif %}
+                <span>{{ post.user.username }}</span>
+            </a>
+            {% if post.user == request.user %}
+                <div class="post-actions">
+                    <a href="{% url 'update_post' post.id %}">Edit</a>
+                    <a href="{% url 'delete_post' post.id %}" class="delete">Delete</a>
+                </div>
+            {% endif %}
+        </div>
+        <img src="{{ post.image.url }}" class="post-image">
+        <div class="post-actions">
+            <button class="like-btn" data-post-id="{{ post.id }}">
+                {% if request.user in post.like_set.all %}
+                    Unlike
+                {% else %}
+                    Like
+                {% endif %}
+            </button>
+            <span class="likes-count">{{ post.like_set.count }} likes</span>
+        </div>
+        <div class="post-caption">
+            <strong>{{ post.user.username }}</strong> {{ post.caption }}
+        </div>
+        <div class="comments">
+            {% for comment in post.comment_set.all %}
+                <div class="comment">
+                    <strong>{{ comment.user.username }}</strong> {{ comment.text }}
+                </div>
+            {% endfor %}
+        </div>
+        <form class="comment-form" data-post-id="{{ post.id }}">
+            {% csrf_token %}
+            <input type="text" name="text" placeholder="Add a comment..." required>
+            <button type="submit">Post</button>
+        </form>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+<!-- templates/profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="profile">
+    <div class="profile-header">
+        <div class="profile-pic">
+            {% if profile_user.profile.profile_image %}
+                <img src="{{ profile_user.profile.profile_image.url }}">
+            {% else %}
+                <img src="/media/profile_images/default.jpg">
+            {% endif %}
+        </div>
+        <div class="profile-info">
+            <h2>{{ profile_user.username }}</h2>
+            <p>{{ profile_user.profile.bio }}</p>
+            <p><strong>{{ posts.count }}</strong> posts</p>
+            {% if profile_user == request.user %}
+                <a href="{% url 'update_profile' %}" class="edit-profile">Edit Profile</a>
+                <a href="{% url 'delete_profile' %}" class="delete-account">Delete Account</a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="profile-posts">
+        {% for post in posts %}
+            <a href="{% url 'profile' profile_user.username %}">
+                <img src="{{ post.image.url }}">
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

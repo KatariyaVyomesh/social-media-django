@@ -1,0 +1,12 @@
+<!-- templates/create_post.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Create Post</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="file" name="image" accept="image/*" required>
+    <textarea name="caption" placeholder="Write a caption..." required></textarea>
+    <button type="submit">Share</button>
+</form>
+{% endblock %}

@@ -1,0 +1,38 @@
+<!-- templates/welcome.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="welcome-container">
+    <div class="welcome-header">
+        <h1>Welcome to InstaClone</h1>
+        <p>Share your moments with the world</p>
+    </div>
+    
+    <div class="welcome-buttons">
+        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+        <a href="{% url 'register' %}" class="btn btn-secondary">Sign Up</a>
+    </div>
+    
+    <div class="welcome-about">
+        <h2>About InstaClone</h2>
+        <p>
+            InstaClone is a photo sharing app where you can upload your favorite moments,
+            connect with friends, and explore amazing content from around the world.
+        </p>
+        <div class="features">
+            <div class="feature">
+                <h3>Share Photos</h3>
+                <p>Upload and share your favorite moments with captions</p>
+            </div>
+            <div class="feature">
+                <h3>Connect</h3>
+                <p>Follow friends and see their posts in your feed</p>
+            </div>
+            <div class="feature">
+                <h3>Chat</h3>
+                <p>Send real-time messages to your connections</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,12 @@
+<!-- templates/delete_profile.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Delete Account</h1>
+<p>Are you sure you want to delete your account? This action cannot be undone.</p>
+<form method="POST">
+    {% csrf_token %}
+    <button type="submit" class="delete-btn">Delete Account</button>
+    <a href="{% url 'profile' request.user.username %}">Cancel</a>
+</form>
+{% endblock %}

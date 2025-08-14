@@ -1,0 +1,13 @@
+<!-- templates/update_post.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Edit Post</h1>
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <img src="{{ post.image.url }}" style="max-width: 300px; display: block; margin-bottom: 20px;">
+    <input type="file" name="image" accept="image/*">
+    <textarea name="caption" required>{{ post.caption }}</textarea>
+    <button type="submit">Update</button>
+</form>
+{% endblock %}

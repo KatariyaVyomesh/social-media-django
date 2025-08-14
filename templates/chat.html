@@ -1,0 +1,118 @@
+<!-- templates/chat.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <div class="chat-header">
+        <a href="{% url 'chat_list' %}" class="back-button">← Back</a>
+        <h2>Chat with {{ receiver.username }}</h2>
+    </div>
+    
+    <div class="messages" id="messages">
+        {% for message in messages %}
+            <div class="message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+                <p>{{ message.text }}</p>
+                <span class="timestamp">{{ message.timestamp|date:"M d, Y H:i" }}</span>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <form id="chat-form" class="message-form">
+        {% csrf_token %}
+        <input type="text" id="chat-message" placeholder="Type a message..." required autocomplete="off">
+        <button type="submit">Send</button>
+    </form>
+</div>
+
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/{{ receiver.username }}/'
+    );
+    
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        
+        // Only process if it's a message (not typing indicator)
+        if (data.type === 'message') {
+            const messagesDiv = document.getElementById('messages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${data.sender === "{{ request.user.username }}" ? 'sent' : 'received'}`;
+            
+            const messageText = document.createElement('p');
+            messageText.textContent = data.message;
+            
+            const timestamp = document.createElement('span');
+            timestamp.className = 'timestamp';
+            timestamp.textContent = formatTimestamp(data.timestamp);
+            
+            messageDiv.appendChild(messageText);
+            messageDiv.appendChild(timestamp);
+            messagesDiv.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+    };
+    
+    chatSocket.onclose = function(e) {
+        console.error('Chat socket closed unexpectedly');
+    };
+    
+    document.querySelector('#chat-form').onsubmit = function(e) {
+        e.preventDefault();
+        const messageInput = document.querySelector('#chat-message');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            // Also send via HTTP POST to ensure message is saved
+            fetch(`/send_message/${'{{ receiver.username }}'}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `text=${encodeURIComponent(message)}`
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    console.error('Failed to save message via HTTP');
+                }
+            })
+            .catch(error => {
+                console.error('HTTP save error:', error);
+            });
+            
+            // Send via WebSocket for real-time display
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'type': 'message'
+            }));
+            
+            messageInput.value = '';
+            messageInput.focus();
+        }
+    };
+    
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        return date.toLocaleString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+    
+    // Auto-focus input field when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('chat-message').focus();
+        
+        // Scroll to bottom of messages
+        const messagesDiv = document.getElementById('messages');
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    });
+</script>
+{% endblock %}
