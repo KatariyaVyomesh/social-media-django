@@ -28,17 +28,17 @@ This project demonstrates the integration of Django with WebSockets for live mes
 ---
 
 ## 📂 Project Structure
-
-instaclone/
-│
-├── instagram_clone/      # Main project settings
-├── media/                # Uploaded user images & media files
-├── static/               # Static files (CSS, JS, images)
-├── templates/            # HTML templates
-├── accounts/             # User authentication & profiles
-├── posts/                # Post, likes, and comments logic
-├── chat/                 # Real-time chat app
-└── manage.py             # Django management script
+   ```bash
+   instaclone/
+   │
+   ├── instagram_clone/      # Main project settings
+   ├── media/                # Uploaded user images & media files
+   ├── static/               # Static files (CSS, JS, images)
+   ├── templates/            # HTML templates
+   ├── accounts/             # User authentication & profiles
+   ├── posts/                # Post, likes, and comments logic
+   ├── chat/                 # Real-time chat app
+   └── manage.py             # Django management script
 
 
 ---
