@@ -59,3 +59,12 @@ instaclone/
 3. ## Run Server
    ```bash
    python manage.py runserver
+
+---
+
+## 📋 Requirements
+Python 3.8+
+Django 4.0+
+Pillow (for image processing)
+Channels (for real-time chat)
+Other dependencies listed in requirements.txt
